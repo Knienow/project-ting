@@ -2,24 +2,28 @@ from ting_file_management.file_management import txt_importer
 import sys
 
 
-def process(path_file, instance):
-    files = []
-    for element in instance.queue:
-        files.append(element["nome_do_arquivo"])
-
-    if path_file not in files:
-        text = txt_importer(path_file)
-        data = {
+def data(path_file):
+    file = txt_importer(path_file)
+    format = {
             "nome_do_arquivo": path_file,
-            "qtd_linhas": len(text),
-            "linhas_do_arquivo": text
+            "qtd_linhas": len(file),
+            "linhas_do_arquivo": file
         }
-    instance.enqueue(data)
-    print(data, file=sys.stdout)
+    sys.stdout.write(f"{format}")
+
+
+def process(path_file, instance):
+    if path_file not in instance.queue:
+        instance.enqueue(path_file)
+        return data(path_file)
 
 
 def remove(instance):
-    """Aqui irá sua implementação"""
+    if len(instance) == 0:
+        return sys.stdout.write("Não há elementos\n")
+    else:
+        deq_file = instance.dequeue()
+        return sys.stdout.write(f"Arquivo {deq_file} removido com sucesso\n")
 
 
 def file_metadata(instance, position):
